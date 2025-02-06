@@ -5,7 +5,6 @@ Campaign Manager is a web-based application for managing marketing campaigns. It
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#use)
-- [View](#view)
 
 ## Installation
 
@@ -31,6 +30,3 @@ Campaign Manager is a web-based application for managing marketing campaigns. It
 
    The frontend application will be available at http://localhost:3000.
 
-## View
-
-![image](https://github.com/user-attachments/assets/f02dd0a9-6024-4197-9495-24d52475ff81)
