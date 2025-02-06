@@ -31,8 +31,12 @@ public class CampaignController {
 
     @PostMapping
     public ResponseEntity<CampaignDto> createCampaign(@RequestBody CampaignDto campaignDto) {
-        CampaignDto savedCampaign = campaignService.createCampaign(campaignDto);
-        return ResponseEntity.ok(savedCampaign);
+        try {
+            CampaignDto savedCampaign = campaignService.createCampaign(campaignDto);
+            return ResponseEntity.ok(savedCampaign);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);  // Zwrócenie błędu, jeśli brak funduszy
+        }
     }
 
     @PutMapping("/{id}")
@@ -51,5 +55,11 @@ public class CampaignController {
             return ResponseEntity.notFound().build();
         }
     }
-}
 
+
+    @GetMapping("/emerald-balance")
+    public ResponseEntity<Double> getEmeraldBalance() {
+        double balance = campaignService.getEmeraldBalance();
+        return ResponseEntity.ok(balance);
+    }
+}

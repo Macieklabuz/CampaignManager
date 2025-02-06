@@ -5,6 +5,7 @@ import com.labuz.campaignmanager.entity.Campaign;
 import com.labuz.campaignmanager.repository.CampaignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,14 @@ public class CampaignService {
     @Autowired
     private CampaignRepository campaignRepository;
 
+    private double emeraldBalance = 1000; // Przykładowe saldo początkowe
+
     public CampaignDto createCampaign(CampaignDto campaignDto) {
+        if (emeraldBalance < campaignDto.getCampaignFund()) {
+            throw new IllegalArgumentException("Not enough emeralds");
+        }
+        emeraldBalance -= campaignDto.getCampaignFund(); // Zmniejszamy saldo po utworzeniu kampanii
+
         Campaign campaign = mapToEntity(campaignDto);
         Campaign savedCampaign = campaignRepository.save(campaign);
         return mapToDto(savedCampaign);
@@ -32,14 +40,20 @@ public class CampaignService {
         return campaignRepository.findById(id).map(this::mapToDto);
     }
 
-
     public void deleteById(Long id) {
-        campaignRepository.deleteById(id);
+        Optional<Campaign> campaign = campaignRepository.findById(id);
+        if (campaign.isPresent()) {
+            emeraldBalance += campaign.get().getCampaignFund();
+            campaignRepository.deleteById(id);
+        }
     }
 
     public Optional<CampaignDto> updateCampaign(Long id, CampaignDto updatedCampaignDto) {
         return campaignRepository.findById(id)
                 .map(existingCampaign -> {
+                    double difference = updatedCampaignDto.getCampaignFund() - existingCampaign.getCampaignFund();
+                    emeraldBalance -= difference;
+
                     existingCampaign.setName(updatedCampaignDto.getName());
                     existingCampaign.setKeywords(updatedCampaignDto.getKeywords());
                     existingCampaign.setBidAmount(updatedCampaignDto.getBidAmount());
@@ -47,9 +61,14 @@ public class CampaignService {
                     existingCampaign.setStatus(updatedCampaignDto.getStatus());
                     existingCampaign.setTown(updatedCampaignDto.getTown());
                     existingCampaign.setRadius(updatedCampaignDto.getRadius());
+
                     Campaign updatedCampaign = campaignRepository.save(existingCampaign);
                     return mapToDto(updatedCampaign);
                 });
+    }
+
+    public double getEmeraldBalance() {
+        return emeraldBalance;
     }
 
     private CampaignDto mapToDto(Campaign campaign) {
