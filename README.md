@@ -9,7 +9,7 @@ Campaign Manager is a web-based application for managing marketing campaigns. It
 ## Installation
 
 1. **Clone repository:**
-   git clone [https://github.com/Macieklabuz/campaign-manager.git](https://github.com/Macieklabuz/CampaignManager.git)
+   git clone [https://github.com/Macieklabuz/CampaignManager.git](https://github.com/Macieklabuz/CampaignManager.git)
 
 2. **Install dependencies**
    cd frontend
